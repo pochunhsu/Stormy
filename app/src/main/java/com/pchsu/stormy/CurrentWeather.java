@@ -13,6 +13,16 @@ public class CurrentWeather {
     private String mSummary;
     private String mTimeZone;
 
+    public String getLocation() {
+        return mLocation;
+    }
+
+    public void setLocation(String location) {
+        mLocation = location;
+    }
+
+    private String mLocation;
+
     public String getTimeZone() {
         return mTimeZone;
     }
