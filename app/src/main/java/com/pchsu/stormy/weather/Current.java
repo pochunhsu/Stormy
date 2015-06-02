@@ -1,10 +1,12 @@
-package com.pchsu.stormy;
+package com.pchsu.stormy.weather;
+
+import com.pchsu.stormy.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class CurrentWeather {
+public class Current {
     private String mIcon;
     private long mTime;
     private double mTemperature;

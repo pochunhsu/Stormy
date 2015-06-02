@@ -1,4 +1,4 @@
-package com.pchsu.stormy;
+package com.pchsu.stormy.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +23,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.pchsu.stormy.R;
+import com.pchsu.stormy.weather.Current;
+import com.pchsu.stormy.weather.Day;
+import com.pchsu.stormy.weather.Forecast;
+import com.pchsu.stormy.weather.Hour;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -46,7 +51,7 @@ public class MainActivity extends FragmentActivity implements
 
     public static String TAG = MainActivity.class.getSimpleName();
 
-    private CurrentWeather mCurrentWeather;
+    private Forecast mForecast;
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -107,6 +112,7 @@ public class MainActivity extends FragmentActivity implements
         mButtonDaily.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(MainActivity.this, DailyActivity.class);
                 startActivity(intent);
             }
@@ -159,10 +165,10 @@ public class MainActivity extends FragmentActivity implements
                         }
                     });
                     try {
-                        String jsonDataString = response.body().string();
-                        Log.v(TAG, jsonDataString);
+                        String jsonData = response.body().string();
+                        Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
-                            mCurrentWeather = getCurrentDetails(jsonDataString);
+                            mForecast = parseForecastDetails(jsonData);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -174,7 +180,7 @@ public class MainActivity extends FragmentActivity implements
                         }
                     } catch (IOException e) {
                         Log.e(TAG, "IO Exception caught: ", e);
-                    } catch (JSONException e){
+                    } catch (JSONException e) {
                         Log.e(TAG, "JSON Exception caught: ", e);
                     }
                 }
@@ -195,37 +201,96 @@ public class MainActivity extends FragmentActivity implements
     }
 
     private void updateDisplay() {
-        mTemperatureLabel.setText(mCurrentWeather.getTemperature()+ "");
-        mTimeLabel.setText(mCurrentWeather.getFormattedTime());
-        mHumidityValue.setText(mCurrentWeather.getHumidity() + "");
-        mPrecipValue.setText(mCurrentWeather.getPrecipChance() + "%");
-        mSummaryLabel.setText(mCurrentWeather.getSummary());
+        Current current = mForecast.getCurrent();
+
+        mTemperatureLabel.setText(current.getTemperature() + "");
+        mTimeLabel.setText(current.getFormattedTime());
+        mHumidityValue.setText(current.getHumidity() + "");
+        mPrecipValue.setText(current.getPrecipChance() + "%");
+        mSummaryLabel.setText(current.getSummary());
         mLocationLabel.setText(mLocationStr);
 
-        // Drawable drawable = getResources().getDrawable(mCurrentWeather.getIconId());
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), mCurrentWeather.getIconId(), null);
+        // Drawable drawable = getResources().getDrawable(current.getIconId());
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), current.getIconId(), null);
         mIconImageView.setImageDrawable(drawable);
     }
 
-    private CurrentWeather getCurrentDetails(String JsonDataString) throws JSONException {
-        JSONObject jo_forecast = new JSONObject(JsonDataString);
+    private Forecast parseForecastDetails(String jsonData) throws JSONException{
+        Forecast forecast = new Forecast();
+
+        forecast.setCurrent(getCurrentDetails(jsonData));
+        forecast.setHourlyForecast(getHourlyForecast(jsonData));
+        forecast.setDailyForecast(getDailyForecast(jsonData));
+
+        return forecast;
+    }
+
+    private Day[] getDailyForecast(String jsonData) throws JSONException {
+        JSONObject jo_forecast = new JSONObject(jsonData);
+        String timezone = jo_forecast.getString("timezone");
+        JSONObject jo_daily = jo_forecast.getJSONObject("daily");
+        JSONArray ja_data = jo_daily.getJSONArray("data");
+
+        Day[] days = new Day[ja_data.length()];
+
+        for(int i =0; i< ja_data.length(); i++){
+            JSONObject jo_day = ja_data.getJSONObject(i);
+            Day day = new Day();
+
+            day.setSummary(jo_day   .getString("summary"));
+            day.setTempeMax(jo_day.getDouble("temperatureMax"));
+            day.setIcon(jo_day.getString("icon"));
+            day.setTime(jo_day.getLong("time"));
+            day.setTimezone(timezone);
+
+            days[i] = day;
+        }
+        return days;
+    }
+
+    private Hour[] getHourlyForecast(String jsonData) throws JSONException {
+        JSONObject jo_forecast = new JSONObject(jsonData);
+        String timezone = jo_forecast.getString("timezone");
+        JSONObject jo_hourly = jo_forecast.getJSONObject("hourly");
+        JSONArray ja_data = jo_hourly.getJSONArray("data");
+
+        Hour[] hours = new Hour[ja_data.length()];
+
+        for(int i =0; i< ja_data.length(); i++){
+            JSONObject jo_hour = ja_data.getJSONObject(i);
+            Hour hour = new Hour();
+
+            hour.setSummary(jo_hour.getString("summary"));
+            hour.setTemperature(jo_hour.getDouble("temperature"));
+            hour.setIcon(jo_hour.getString("icon"));
+            hour.setTime(jo_hour.getLong("time"));
+            hour.setTimezone(timezone);
+
+            hours[i] = hour;
+        }
+
+        return hours;
+    }
+
+    private Current getCurrentDetails(String jsonData) throws JSONException {
+        JSONObject jo_forecast = new JSONObject(jsonData);
         String timezone = jo_forecast.getString("timezone");
         Log.i(TAG, "From JSON: " + timezone );
 
         JSONObject jo_currently = jo_forecast.getJSONObject("currently");
 
-        CurrentWeather currentWeather = new CurrentWeather();
-        currentWeather.setHumidity(jo_currently.getDouble("humidity"));
-        currentWeather.setTime(jo_currently.getLong("time"));
-        currentWeather.setIcon(jo_currently.getString("icon"));
-        currentWeather.setPrecipChance(jo_currently.getDouble("precipProbability"));
-        currentWeather.setSummary(jo_currently.getString("summary"));
-        currentWeather.setTemperature(jo_currently.getDouble("temperature"));
-        currentWeather.setTimeZone(timezone);
+        Current current = new Current();
+        current.setHumidity(jo_currently.getDouble("humidity"));
+        current.setTime(jo_currently.getLong("time"));
+        current.setIcon(jo_currently.getString("icon"));
+        current.setPrecipChance(jo_currently.getDouble("precipProbability"));
+        current.setSummary(jo_currently.getString("summary"));
+        current.setTemperature(jo_currently.getDouble("temperature"));
+        current.setTimeZone(timezone);
 
-        Log.d(TAG, currentWeather.getFormattedTime());
+        Log.d(TAG, current.getFormattedTime());
 
-        return currentWeather;
+        return current;
     }
 
     private String getLocationStirng(String JsonDataString) throws JSONException {
