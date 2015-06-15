@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context=".MainActivity"
-                android:background="#ff7eaa0e">
+                android:background="@drawable/background_gradient">
 
     <TextView
         android:layout_width="wrap_content"
@@ -174,7 +174,7 @@
             android:id="@+id/DegreeFormatLabel"
             android:layout_gravity="center_horizontal"
             android:textSize="16sp"
-            android:textColor="#80ffffff"
+            android:textColor="@android:color/white"
             android:gravity="center_horizontal"/>
 
         <Switch
@@ -188,29 +188,25 @@
     </LinearLayout>
 
     <Button
-        android:layout_width="175dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/buttonDaily"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/square_button"
-        android:layout_marginBottom="-60dp"
-        android:layout_marginRight="-100dp"
+        android:background="@drawable/button_bottomright_"
         android:text="Daily"
         android:textSize="20sp"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical|center_horizontal"
         android:textColor="#80ffffff"/>
 
     <Button
-        android:layout_width="175dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/buttonHourly"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/square_button"
-        android:layout_marginBottom="-60dp"
-        android:layout_marginLeft="-100dp"
-        android:gravity="center_vertical|right"
+        android:background="@drawable/button_bottomleft_"
+        android:gravity="center_vertical|center_horizontal"
         android:textSize="20sp"
         android:text="Hourly"
         android:textColor="#80ffffff"/>

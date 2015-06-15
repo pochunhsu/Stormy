@@ -1,21 +1,19 @@
 package com.pchsu.stormy.ui;
 
+import android.app.ListActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pchsu.stormy.R;
 
-
-public class DailyActivity extends FragmentActivity {
+public class DailyActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

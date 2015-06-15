@@ -1,21 +1,19 @@
 package com.pchsu.stormy.ui;
 
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pchsu.stormy.R;
 
-
-public class HourlyActivity extends FragmentActivity {
+public class HourlyActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hourly);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
