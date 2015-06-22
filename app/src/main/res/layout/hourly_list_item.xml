@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                tools:background="@drawable/background_gradient">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/centerAnchor"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeLabel"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/centerAnchor"
+        android:layout_marginRight="40dp"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        tools:text="12 PM"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iconImageView"
+        android:src="@drawable/partly_cloudy"
+        android:layout_toLeftOf="@+id/centerAnchor"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/summaryLabel"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        tools:text="Partly cloudy"
+        android:gravity="left"
+        android:layout_toRightOf="@+id/iconImageView"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tempLabel"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        tools:text="100"
+        android:layout_toRightOf="@+id/summaryLabel"
+        android:layout_marginLeft="4dp"/>
+
+</RelativeLayout>

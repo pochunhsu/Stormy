@@ -10,5 +10,7 @@
     <string name="title_activity_hourly">HourlyActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_daily">DailyActivity</string>
-    <string name="no_daily_data">There is no data in display.</string>
+    <string name="no_daily_data">There is no data to display.</string>
+    <string name="locationLabel_Daily">Location Info Missing ...</string>
+    <string name="WeekTitleLable_Daily">This Week\'s Weather</string>
 </resources>

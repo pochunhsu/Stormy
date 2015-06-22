@@ -1,39 +1,40 @@
 package com.pchsu.stormy.ui;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Parcelable;
+import android.widget.TextView;
 
 import com.pchsu.stormy.R;
+import com.pchsu.stormy.adapter.DayAdapter;
+import com.pchsu.stormy.weather.Day;
+
+import java.util.Arrays;
 
 public class DailyActivity extends ListActivity {
+
+    private Day[] mDays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_daily, menu);
-        return true;
-    }
+        Intent intent = getIntent();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.DAILY_FORECAST);
+        mDays = Arrays.copyOf(parcelables,parcelables.length, Day[].class);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        DayAdapter adapter = new DayAdapter(this, mDays);
+        setListAdapter(adapter);
+
+        TextView locationLabel = (TextView) this.findViewById(R.id.locationLabel_Daily);
+        String location_str = intent.getExtras().getString(MainActivity.LOCATION_STR);
+
+        if(location_str != null) {
+            locationLabel.setText(location_str);
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }

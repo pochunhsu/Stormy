@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -50,8 +51,14 @@ public class MainActivity extends FragmentActivity implements
         LocationListener {
 
     public static String TAG = MainActivity.class.getSimpleName();
+    public static final String DAILY_FORECAST = "DAILY_FORECAST";
+    public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
+    public static final String LOCATION_STR = "LOCATION_STR";
 
     private Forecast mForecast;
+
+    // to enable daily/hourly screen only after data is ready
+    private boolean mDataInitialized;
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -81,6 +88,8 @@ public class MainActivity extends FragmentActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
+        mDataInitialized = false;
+
         mProgressBar.setVisibility(View.INVISIBLE);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -102,22 +111,19 @@ public class MainActivity extends FragmentActivity implements
             }
         });
 
-        mButtonHourly.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, HourlyActivity.class);
-                startActivity(intent);
-            }
-        });
+        /*  using the butterknife @OnClick instead
         mButtonDaily.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(MainActivity.this, DailyActivity.class);
-                startActivity(intent);
+                if (mDataInitialized) {
+                    Intent intent = new Intent(MainActivity.this, DailyActivity.class);
+                    intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
+                    intent.putExtra(LOCATION_STR, mLocationStr);
+                    startActivity(intent);
+                }
             }
         });
-        //getForecast(mLatitude, mLongitude);
+        */
     }
 
     @Override
@@ -221,7 +227,7 @@ public class MainActivity extends FragmentActivity implements
         forecast.setCurrent(getCurrentDetails(jsonData));
         forecast.setHourlyForecast(getHourlyForecast(jsonData));
         forecast.setDailyForecast(getDailyForecast(jsonData));
-
+        mDataInitialized = true;
         return forecast;
     }
 
@@ -245,6 +251,7 @@ public class MainActivity extends FragmentActivity implements
 
             days[i] = day;
         }
+
         return days;
     }
 
@@ -463,6 +470,28 @@ public class MainActivity extends FragmentActivity implements
              * user with the error.
              */
             Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
+        }
+    }
+
+    // using butterknife for OnClickListenr
+
+    @OnClick(R.id.buttonDaily)
+    public void startDailyActivity (View v) {
+        if (mDataInitialized) {
+            Intent intent = new Intent(MainActivity.this, DailyActivity.class);
+            intent.putExtra(DAILY_FORECAST, mForecast.getDailyForecast());
+            intent.putExtra(LOCATION_STR, mLocationStr);
+            startActivity(intent);
+        }
+    }
+
+    @OnClick(R.id.buttonHourly)
+    public void startHourlyActivity (View v) {
+        if (mDataInitialized) {
+            Intent intent = new Intent(MainActivity.this, HourlyActivity.class);
+            intent.putExtra(HOURLY_FORECAST, mForecast.getHourlyForecast());
+            intent.putExtra(LOCATION_STR, mLocationStr);
+            startActivity(intent);
         }
     }
 }
